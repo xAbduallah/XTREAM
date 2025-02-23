@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+:root {
+    --bg-primary: #F9FAFB;
+    --bg-secondary: #E5E7EB;
+    --bg-tertiary: #D1D5DB;
+
+    --text-primary: #111827;
+    --text-secondary: #374151;
+    --text-tertiary: #6B7280;
+
+    --gradient-start: rgba(37, 99, 235, 0.6);
+    --gradient-end: rgba(59, 130, 246, 0.3);
+
+    --border: #E5E7EB;
+    --border-active: #c7d4f0;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+
+    --accent-primary: #2563eb;
+    --accent-secondary: #3b82f6;
+
+    --font-family: 'Poppins', sans-serif;
+}
+
+.dark {
+    --bg-primary: #0A0F1C;
+    --bg-secondary: #111827;
+    --bg-tertiary: #1F2937;
+
+    --text-primary: #F3F4F6;
+    --text-secondary: #E5E7EB;
+    --text-tertiary: #D1D5DB;
+
+    --gradient-start: #485c9e;
+    --gradient-end: #6ba1f8;
+
+    /* --gradient-start: #1E40AF;
+    --gradient-end: #3B82F6; */
+
+    --border: #1F2937;
+    --border-active: #243752;
+    --shadow-color: rgb(0 0 0 / 0.3);
+
+    --accent-primary: #3B82F6;
+    --accent-secondary: #60A5FA;
+
+    --gaming-blue-dark: #1E40AF;
+    --gaming-blue: #3B82F6;
+    --gaming-blue-light: #60A5FA;
+}
+
+@layer base {
+    body {
+        @apply bg-[var(--bg-secondary)] text-[var(--text-primary)];
+        font-family: var(--font-family) !important;
+        margin: 0;
+        transition: background-color 0.5s, color 0.5s !important;
+    }
+}
+
+@layer components {
+    .container {
+        @apply w-[90%] md:w-[80%] lg:w-[70%] 2xl:w-[60%] mx-auto;
+    }
+}
+
+::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 15px;
+    height: 7px;
+    background-color: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: var(--bg-tertiary);
+    box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+}
+
+.bg-grid-pattern {
+    background-image: linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+
+/* Add these new utility classes */
+.gaming-blur {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.gaming-gradient {
+    background: linear-gradient(135deg, var(--gaming-blue-dark), var(--gaming-blue-light));
+}
+
+.gaming-text-gradient {
+    background: linear-gradient(135deg, var(--gaming-blue), var(--gaming-blue-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Swiper customization */
+.categories-swiper {
+    padding: 0 40px !important;
+}
+
+.categories-swiper .swiper-button-next,
+.categories-swiper .swiper-button-prev {
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+}
+
+.categories-swiper .swiper-button-next:after,
+.categories-swiper .swiper-button-prev:after {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.categories-swiper .swiper-button-next:hover,
+.categories-swiper .swiper-button-prev:hover {
+    background: var(--accent-primary);
+    color: var(--text-primary);
+    border-color: var(--accent-primary);
+}
+
+.categories-swiper .swiper-button-disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+/* Grid layout styles */
+.categories-swiper .swiper-grid-column>.swiper-wrapper {
+    flex-direction: row;
+}
+
+/* Trending Games Swiper */
+.trending-swiper {
+    overflow: visible !important;
+}
+
+.trending-swiper .swiper-wrapper {
+    transition-timing-function: linear !important;
+    will-change: transform;
+}
+
+.trending-swiper .swiper-slide {
+    width: 300px !important;
+    transition: all 0.3s ease;
+}
+
+/* Remove other trending-swiper styles that might interfere */
+.trending-swiper .swiper-slide-active,
+.trending-swiper .swiper-slide-prev,
+.trending-swiper .swiper-slide-next,
+.trending-swiper .swiper-slide-shadow-left,
+.trending-swiper .swiper-slide-shadow-right {
+    opacity: 1 !important;
+    transform: none !important;
+}
