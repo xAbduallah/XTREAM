@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { motion } from "framer-motion";
 import { Trophy, Star, Shield, Gamepad2, Dice1, Swords, Target, Ghost, Crown, Sword, Coins, Gift, AppWindow, CreditCard, Package, User } from "lucide-react";
-import Link from 'next/link';
 
 export default function HomeHero() {
 
@@ -48,7 +47,7 @@ export default function HomeHero() {
     }, []);
 
     return (
-        <section className="relative flex flex-col justify-center overflow-hidden pt-[56px]">
+        <section className="relative flex flex-col justify-center overflow-hidden mt-[-3.5rem] py-8">
             {/* Background Elements */}
             <div className="absolute inset-0 opacity-70">
                 {floatingIcons.map((iconData, index) => (

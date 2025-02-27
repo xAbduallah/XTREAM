@@ -1,9 +1,10 @@
+'use client'
 import { AppDispatch } from '@/lib/store';
-import { getUserData } from '@/lib/userCache';
-import { userActions } from '@/lib/userCache';
+import { verifyUserToken } from '@/lib/userServices';
 import { useDispatch, useSelector } from 'react-redux';
 import React, { createContext, useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
+import Loader from '@/Utils/Loader';
 
 export type InitializerContextType = {
     darkMode: boolean;
@@ -14,27 +15,26 @@ export const InitializerContext = createContext<InitializerContextType | null>(n
 export default function AppInitializer({ children }: { children: React.ReactNode }) {
     const dispatch = useDispatch<AppDispatch>();
     const [darkMode, setDarkMode] = useState(false);
-    const { user, token: userToken } = useSelector((state: any) => state.userCache);
-    const { setToken } = userActions;
-    
+    const [isThemeLoaded, setIsThemeLoaded] = useState(false);
+    const { user } = useSelector((state: any) => state.userServices);
+
+    // Dark Mode
     useEffect(() => {
         const savedTheme = Cookies.get('theme');
-        if (savedTheme) {
-            setDarkMode(savedTheme === 'dark');
-        } else {
-            setDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
-        }
+        const isDark = savedTheme ? savedTheme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        setDarkMode(isDark);
+        document.documentElement.classList.toggle('dark', isDark);
+        Cookies.set('theme', isDark ? 'dark' : 'light');
+        setIsThemeLoaded(true);
     }, []);
 
     useEffect(() => {
-        if (darkMode) {
-            document.documentElement.classList.add('dark');
-            Cookies.set('theme', 'dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-            Cookies.set('theme', 'light');
+        if (isThemeLoaded) {
+            document.documentElement.classList.toggle('dark', darkMode);
+            Cookies.set('theme', darkMode ? 'dark' : 'light');
         }
-    }, [darkMode]);
+    }, [darkMode, isThemeLoaded]);
 
     const toggleDarkMode = () => {
         setDarkMode((prev) => !prev);
@@ -42,16 +42,14 @@ export default function AppInitializer({ children }: { children: React.ReactNode
 
     useEffect(() => {
         const token = Cookies.get('token');
-        if (!userToken && token) {
-            dispatch(setToken(token));
+        if (token && !user) {
+            dispatch(verifyUserToken(token));
         }
     }, []);
-
-    useEffect(() => {
-        if (userToken && !user) {
-            dispatch(getUserData(userToken));
-        }
-    }, [dispatch, userToken]);
+    if (!isThemeLoaded) {
+        return <Loader />;
+    }
+    //#endregion
 
     return (
         <InitializerContext.Provider value={{ darkMode, toggleDarkMode }}>

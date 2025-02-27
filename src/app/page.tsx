@@ -16,7 +16,7 @@ export default function Home() {
       <TrendingGames />
 
       {/* Services Section */}
-      <section className="py-20 backdrop-blur-sm">
+      <section className="backdrop-blur-sm">
         <div className="container mx-auto px-6">
           <h2 className="text-4xl font-extrabold text-center text-[var(--text-primary)] mb-16">
             Our Services
@@ -67,7 +67,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 backdrop-blur-sm">
+      <section className="pt-16 backdrop-blur-sm">
         <div className="container mx-auto px-4 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

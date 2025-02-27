@@ -1,8 +1,11 @@
 @import "tailwindcss";
+@import 'swiper/css';
+@import 'swiper/css/grid';
+@import 'swiper/css/navigation';
 
 :root {
     --bg-primary: #F9FAFB;
-    --bg-secondary: #E5E7EB;
+    --bg-secondary: #f1f9ff;
     --bg-tertiary: #D1D5DB;
 
     --text-primary: #111827;
@@ -12,9 +15,9 @@
     --gradient-start: rgba(37, 99, 235, 0.6);
     --gradient-end: rgba(59, 130, 246, 0.3);
 
-    --border: #E5E7EB;
+    --border: #aaaaaa;
     --border-active: #c7d4f0;
-    --shadow-color: rgba(0, 0, 0, 0.1);
+    --shadow: #ff0000;
 
     --accent-primary: #2563eb;
     --accent-secondary: #3b82f6;
@@ -160,4 +163,35 @@
 .trending-swiper .swiper-slide-shadow-right {
     opacity: 1 !important;
     transform: none !important;
+}
+
+/* Add these to your existing styles */
+select option {
+    padding: 8px;
+    margin: 4px;
+    border-radius: 4px;
+}
+
+select option:hover {
+    background-color: var(--accent-primary);
+    color: white;
+}
+
+.dark select option {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.dark select option:hover {
+    background-color: var(--accent-primary);
+    color: white;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    background-color: transparent !important;
+    transition: background-color 9999s ease-in-out 0s;
+    -webkit-text-fill-color: var(--text-primary) !important;
 }

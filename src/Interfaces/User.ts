@@ -1,17 +1,25 @@
 export interface IUser {
-    _id: string
-    name: string
+    id: string
+    username: string
     email: string
-    dateOfBirth: string
-    gender: string
-    photo: string
+    firstName: string
+    lastName: string
+    userType: string
+    isActive: boolean
+    isVerified: boolean
+    isSeller: boolean
+    isVerifiedSeller: boolean
     createdAt: string
+    token: string
+}
+
+export interface IRequestState {
+    success: boolean;
+    message: string | null;
+    isLoading: boolean;
 }
 
 export interface UserState {
     user: IUser | null;
-    token: string | null;
-    isLoggedIn: boolean;
-    isLoading: boolean;
-    message: string | null;
+    requestState: Record<string, IRequestState>;
 }

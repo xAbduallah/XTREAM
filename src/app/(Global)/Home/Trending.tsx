@@ -9,7 +9,6 @@ import type { Swiper as SwiperType } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 export default function TrendingGames() {
-    const swiperRef = useRef<SwiperType | null>(null);
 
     const featuredGames = [
         {
@@ -68,7 +67,6 @@ export default function TrendingGames() {
                 <h2 className="text-3xl font-bold text-center text-[var(--text-primary)] mb-12">
                     Trending Games
                 </h2>
-
                 <Swiper
                     modules={[Autoplay]}
                     spaceBetween={24}
@@ -77,7 +75,7 @@ export default function TrendingGames() {
                     speed={10000}
                     autoplay={{ delay: 0, pauseOnMouseEnter: true }}
                     allowTouchMove={true}
-                    className="cursor-pointer">
+                    className="cursor-pointer rounded-xl">
                     {featuredGames.map((game, index) => (
                         <SwiperSlide
                             key={index}
@@ -103,13 +101,31 @@ export default function TrendingGames() {
                     ))}
                 </Swiper>
 
-                <Link
-                    href="/games"
-                    className="flex items-center justify-center text-[var(--text-primary)] hover:text-[var(--text-tertiary)] transition-colors mt-8"
-                >
-                    Discover all
-                    <TrendingUp className="w-5 h-5 ml-2" />
-                </Link>
+                <div className="flex justify-center mt-12">
+                    <Link
+                        href="/games"
+                        className="group relative inline-flex items-center justify-center gap-3 
+                                 px-8 py-3 rounded-full bg-[var(--bg-secondary)]/50 
+                                 border border-[var(--border)] backdrop-blur-sm 
+                                 hover:border-[var(--accent-primary)] transition-all duration-300"
+                    >
+                        <span className="relative z-10 font-medium text-[var(--text-primary)] 
+                                      group-hover:text-[var(--accent-primary)] transition-colors">
+                            Discover all games
+                        </span>
+                        <TrendingUp
+                            className="w-5 h-5 text-[var(--text-primary)] 
+                                     group-hover:text-[var(--accent-primary)] 
+                                     group-hover:translate-x-1 transition-all duration-300"
+                        />
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-r 
+                                     from-[var(--accent-primary)]/0 via-[var(--accent-primary)]/0 
+                                     to-[var(--accent-primary)]/0 group-hover:from-[var(--accent-primary)]/5 
+                                     group-hover:via-[var(--accent-primary)]/10 
+                                     group-hover:to-[var(--accent-primary)]/5 transition-all duration-300"
+                        />
+                    </Link>
+                </div>
             </div>
         </section>
     );

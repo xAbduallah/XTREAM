@@ -1,21 +1,50 @@
 'use client'
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useSelector } from 'react-redux';
-import { User, Sun, Moon, Menu, X, Search, Bell, ShoppingCart } from 'lucide-react';
+import { useSelector, useDispatch } from 'react-redux';
+import { User, Sun, Moon, Menu, X, Search, Bell, ShoppingCart, User2, LogOut, Settings, UserCircle, CircleAlert, TriangleAlert } from 'lucide-react';
 import { InitializerContext } from '@/Context/AppInitializer';
 import { motion, AnimatePresence } from 'framer-motion';
+import { RootState } from '@/lib/store';
+import { userActions } from '@/lib/userServices';
+import { useRouter } from 'next/navigation';
+
+const userMenu = [
+    {
+        label: 'Profile',
+        href: '/User/Profile',
+        icon: <UserCircle className="w-4 h-4" />
+    },
+    {
+        label: 'Settings',
+        href: '/User/Settings',
+        icon: <Settings className="w-4 h-4" />
+    }
+]
 
 export default function Navbar() {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const profileRef = useRef<HTMLDivElement>(null);
     const context = useContext(InitializerContext);
     const { darkMode, toggleDarkMode } = context || { darkMode: false, toggleDarkMode: () => { } };
-    const { user } = useSelector((state: any) => state.userCache);
+    const { user } = useSelector((state: RootState) => state.userServices);
+    const dispatch = useDispatch();
+    const { push } = useRouter();
+
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+                setIsProfileOpen(false);
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     return (
-        <nav className="fixed top-0 left-0 right-0 z-50 shadow-lg backdrop-blur-lg py-2.5">
-            <div className="container mx-auto px-4">
+        <nav className="sticky top-0 left-0 right-0 z-50 shadow-lg backdrop-blur-lg py-2.5">
+            <div className="container max-w-[1200px] mx-auto px-4">
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
                     <Link href="/" className="flex items-center space-x-2">
@@ -72,34 +101,65 @@ export default function Navbar() {
 
                         {/* User Menu */}
                         {user ? (
-                            <Link href="/User/Profile" className="flex items-center gap-2">
-                                <img
-                                    src={user.photo}
-                                    alt={user.name}
-                                    className="h-8 w-8 rounded-full object-cover ring-2 ring-[var(--border)]"
-                                />
-                            </Link>
+                            <div className="relative" ref={profileRef}>
+                                <div className="flex items-center gap-2">
+                                    <button onClick={() => setIsProfileOpen(!isProfileOpen)}
+                                        className="flex items-center gap-2 p-2 hover:bg-[var(--gradient-start)]/30 rounded-full transition-colors">
+                                        <User2 className="h-9 w-9 rounded-full object-cover p-1" />
+                                    </button>
+                                    {!user.isVerified && <CircleAlert  className='absolute top-0 right-0 w-5 h-5 text-red-600/70'/>}
+                                </div>
+
+                                {/* Dropdown Menu */}
+                                {isProfileOpen && (
+                                    <div className="absolute right-0 mt-2 w-48 rounded-xl bg-[var(--bg-secondary)]/70 border border-[var(--border)] shadow-lg py-1 z-50">
+
+                                        <div className="px-4 py-3 border-b border-[var(--border)]">
+                                            <p className="text-sm font-medium text-[var(--text-primary)]">{user.username}
+                                                {!user.isVerified ? <span className='text-xs text-red-600'> Not Verified</span> : <span className='text-xs text-green-600'> Verified</span>}</p>
+                                            <p className="text-xs text-[var(--text-secondary)]">{user.email}</p>
+                                        </div>
+
+                                        {userMenu.map((item) => (
+                                            <motion.div
+                                                key={item.label}
+                                                initial={{ opacity: 0, y: -20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: -20 }}
+                                            >
+                                                <Link href={item.href === "/User/Profile" ? `/User/${user.id}` : item.href} onClick={() => { setIsProfileOpen(false) }}
+                                                    className="flex items-center gap-2 px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-colors">
+                                                    {item.icon}
+                                                    {item.label}
+                                                </Link>
+                                            </motion.div>
+                                        ))}
+
+                                        <div className="py-1">
+                                            <motion.div
+                                                initial={{ opacity: 0, y: -20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: -20 }}
+                                            >
+                                                <button onClick={() => { dispatch(userActions.logoutUser()); setIsProfileOpen(false); push('/'); }}
+                                                    className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-500 hover:bg-[var(--bg-tertiary)] transition-colors">
+                                                    <LogOut className="w-4 h-4" />
+                                                    Sign out
+                                                </button>
+                                            </motion.div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         ) : (
-                            <Link
-                                href="/Auth/Login"
-                                className="px-4 py-2 bg-[var(--accent-primary)] text-white rounded-lg 
-                                         hover:bg-[var(--accent-primary-hover)] transition-colors"
-                            >
-                                Sign In
+                            <Link href="/Auth/Login" className="group relative inline-flex items-center justify-center px-6 py-2.5 rounded-xl overflow-hidden bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)] hover:scale-[1.02] shadow-md hover:shadow-[var(--accent-primary)]/20 transition-all duration-300">
+                                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-[var(--accent-primary)] via-[var(--accent-secondary)] to-[var(--accent-primary)] opacity-0 group-hover:opacity-100 translate-x-[100%] group-hover:translate-x-[-100%] transition-all duration-700" />
+                                <span className="relative flex items-center gap-2 text-sm font-medium text-white">
+                                    <User className="w-4 h-4" />
+                                    Sign In
+                                </span>
                             </Link>
                         )}
-
-                        {/* Mobile menu button */}
-                        <button
-                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="md:hidden p-2 hover:bg-[var(--bg-secondary)] rounded-full transition-colors"
-                        >
-                            {isMobileMenuOpen ? (
-                                <X className="w-6 h-6 text-[var(--text-primary)]" />
-                            ) : (
-                                <Menu className="w-6 h-6 text-[var(--text-primary)]" />
-                            )}
-                        </button>
                     </div>
                 </div>
             </div>
@@ -117,43 +177,11 @@ export default function Navbar() {
                             <input
                                 type="text"
                                 placeholder="Search for games, items, or services..."
-                                className="w-full px-4 py-2 rounded-full text-sm bg-[var(--bg-secondary)]
-                                         border border-[var(--border)] text-[var(--text-primary)]
-                                         placeholder-[var(--text-secondary)] focus:outline-none
-                                         focus:ring-2 focus:ring-[var(--accent-primary)]"
+                                className="w-full px-4 py-2 rounded-full text-sm bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
                             />
-                            <button className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5
-                                           bg-[var(--accent-primary)] rounded-full
-                                           hover:bg-[var(--accent-primary-hover)] transition-colors">
+                            <button className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-[var(--accent-primary)] rounded-full hover:bg-[var(--accent-primary-hover)] transition-colors">
                                 <Search className="w-4 h-4 text-white" />
                             </button>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            {/* Mobile Menu */}
-            <AnimatePresence>
-                {isMobileMenuOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        className="md:hidden bg-[var(--bg-primary)] border-t border-[var(--border)]"
-                    >
-                        <div className="container mx-auto px-4 py-4">
-                            {!user && (
-                                <div className="pt-4 flex flex-col space-y-4">
-                                    <Link
-                                        href="/Auth/Register"
-                                        className="block text-center px-4 py-2 bg-[var(--accent-primary)] 
-                                                 text-white rounded-lg hover:bg-[var(--accent-primary-hover)] 
-                                                 transition-colors"
-                                    >
-                                        Create Account
-                                    </Link>
-                                </div>
-                            )}
                         </div>
                     </motion.div>
                 )}
